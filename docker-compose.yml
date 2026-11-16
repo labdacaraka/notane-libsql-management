@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  notane-libsql:
+    image: ghcr.io/notane/notane-libsql-server:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: notane-libsql-server
+    restart: unless-stopped
+    ports:
+      - "8080:8080" # Client Query HTTP Port
+      - "127.0.0.1:8082:8082" # Admin Port (bound to localhost for security)
+    environment:
+      - SQLD_NODE=primary
+      - SQLD_HTTP_LISTEN_ADDR=0.0.0.0:8080
+      - SQLD_ADMIN_LISTEN_ADDR=0.0.0.0:8082
+      - SQLD_DB_PATH=/var/lib/sqld
+      - SQLD_ENABLE_NAMESPACES=true
+      # Optional: uncomment to secure admin endpoint with Bearer token
+      # - SQLD_ADMIN_AUTH_KEY=my_secure_admin_key_12345
+    volumes:
+      - libsql-data:/var/lib/sqld
+
+volumes:
+  libsql-data:
+    driver: local
