@@ -89,21 +89,35 @@ jobs:
           ./scripts/download-sqld.sh ${{ matrix.platform.sqld_target }}
 
       - name: Configure macOS code signing
-        if: matrix.platform.os == 'macos-latest' && secrets.APPLE_CERTIFICATE != ''
+        if: matrix.platform.os == 'macos-latest'
+        env:
+          CERT: ${{ secrets.APPLE_CERTIFICATE }}
+          CERT_PASS: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          SIGN_ID: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID_VAL: ${{ secrets.APPLE_ID }}
+          APPLE_PASS: ${{ secrets.APPLE_PASSWORD }}
+          TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          echo "APPLE_CERTIFICATE=${{ secrets.APPLE_CERTIFICATE }}" >> $GITHUB_ENV
-          echo "APPLE_CERTIFICATE_PASSWORD=${{ secrets.APPLE_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
-          echo "APPLE_SIGNING_IDENTITY=${{ secrets.APPLE_SIGNING_IDENTITY }}" >> $GITHUB_ENV
-          echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> $GITHUB_ENV
-          echo "APPLE_PASSWORD=${{ secrets.APPLE_PASSWORD }}" >> $GITHUB_ENV
-          echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> $GITHUB_ENV
+          if [ -n "$CERT" ]; then
+            echo "APPLE_CERTIFICATE=$CERT" >> $GITHUB_ENV
+            echo "APPLE_CERTIFICATE_PASSWORD=$CERT_PASS" >> $GITHUB_ENV
+            echo "APPLE_SIGNING_IDENTITY=$SIGN_ID" >> $GITHUB_ENV
+            echo "APPLE_ID=$APPLE_ID_VAL" >> $GITHUB_ENV
+            echo "APPLE_PASSWORD=$APPLE_PASS" >> $GITHUB_ENV
+            echo "APPLE_TEAM_ID=$TEAM_ID" >> $GITHUB_ENV
+          fi
 
       - name: Configure Windows code signing
-        if: matrix.platform.os == 'windows-latest' && secrets.WINDOWS_CERTIFICATE != ''
+        if: matrix.platform.os == 'windows-latest'
         shell: bash
+        env:
+          CERT: ${{ secrets.WINDOWS_CERTIFICATE }}
+          CERT_PASS: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
         run: |
-          echo "WINDOWS_CERTIFICATE=${{ secrets.WINDOWS_CERTIFICATE }}" >> $GITHUB_ENV
-          echo "WINDOWS_CERTIFICATE_PASSWORD=${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}" >> $GITHUB_ENV
+          if [ -n "$CERT" ]; then
+            echo "WINDOWS_CERTIFICATE=$CERT" >> $GITHUB_ENV
+            echo "WINDOWS_CERTIFICATE_PASSWORD=$CERT_PASS" >> $GITHUB_ENV
+          fi
 
       - name: Build and Package with Tauri Action
         uses: tauri-apps/tauri-action@v0
