@@ -28,7 +28,7 @@ jobs:
       matrix:
         platform:
           - name: macOS-AppleSilicon
-            os: macos-14
+            os: macos-13
             target: aarch64-apple-darwin
             sqld_target: aarch64-apple-darwin
           - name: macOS-Intel

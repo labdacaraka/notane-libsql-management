@@ -1,4 +1,4 @@
-FROM ghcr.io/tursodatabase/sqld:v0.24.25
+FROM ghcr.io/tursodatabase/libsql-server:latest
 
 LABEL org.opencontainers.image.title="Notane LibSQL Server" \
       org.opencontainers.image.description="Self-hosted multi-tenant libSQL (sqld) server instance managed by Notane" \
